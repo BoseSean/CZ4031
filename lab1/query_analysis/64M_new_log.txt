@@ -1,0 +1,807 @@
+sql> WITH temp_count AS(
+     SELECT pubtype_id, COUNT(*) AS count
+     FROM publication
+     GROUP BY pubtype_id
+     )
+     
+     SELECT pubtype.pubname, temp_count.count
+     FROM temp_count JOIN pubtype
+     WHERE temp_count.pubtype_id = pubtype.pubtype_id
+[2018-10-11 21:04:34] 7 rows retrieved starting from 1 in 1 s 49 ms (execution: 1 s 20 ms, fetching: 29 ms)
+sql> WITH temp_count AS(
+     SELECT pubtype_id, COUNT(*) AS count
+     FROM publication
+     GROUP BY pubtype_id
+     )
+     
+     SELECT pubtype.pubname, temp_count.count
+     FROM temp_count JOIN pubtype
+     WHERE temp_count.pubtype_id = pubtype.pubtype_id
+[2018-10-11 21:04:35] 7 rows retrieved starting from 1 in 1 s 51 ms (execution: 1 s 39 ms, fetching: 12 ms)
+sql> WITH temp_count AS(
+     SELECT pubtype_id, COUNT(*) AS count
+     FROM publication
+     GROUP BY pubtype_id
+     )
+     
+     SELECT pubtype.pubname, temp_count.count
+     FROM temp_count JOIN pubtype
+     WHERE temp_count.pubtype_id = pubtype.pubtype_id
+[2018-10-11 21:04:36] 7 rows retrieved starting from 1 in 986 ms (execution: 973 ms, fetching: 13 ms)
+sql> WITH count_greater_than_200 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_JULY AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%JULY%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_200 AS C1
+     INNER JOIN conf_in_JULY AS C2 on C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:04:37] 70 rows retrieved starting from 1 in 732 ms (execution: 719 ms, fetching: 13 ms)
+sql> WITH count_greater_than_200 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_JULY AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%JULY%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_200 AS C1
+     INNER JOIN conf_in_JULY AS C2 on C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:04:38] 70 rows retrieved starting from 1 in 747 ms (execution: 734 ms, fetching: 13 ms)
+sql> WITH count_greater_than_200 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_JULY AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%JULY%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_200 AS C1
+     INNER JOIN conf_in_JULY AS C2 on C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:04:39] 70 rows retrieved starting from 1 in 740 ms (execution: 728 ms, fetching: 12 ms)
+sql> WITH temp_publication AS(
+     SELECT P.*, A.authorname
+     FROM (pub_author AS PA
+     INNER JOIN publication AS P ON PA.pubid = P.pubid)
+     INNER JOIN author AS A ON PA.aid = A.aid
+     )
+     
+     SELECT *
+     FROM temp_publication
+     WHERE temp_publication.authorname = "Rolf Hennicker" and temp_publication.pubyear = 2015
+[2018-10-11 21:04:39] 6 rows retrieved starting from 1 in 54 ms (execution: 29 ms, fetching: 25 ms)
+sql> WITH temp_publication AS(
+     SELECT P.*, A.authorname
+     FROM (pub_author AS PA
+     INNER JOIN publication AS P ON PA.pubid = P.pubid)
+     INNER JOIN author AS A ON PA.aid = A.aid
+     )
+     
+     SELECT *
+     FROM temp_publication
+     WHERE temp_publication.authorname = "Rolf Hennicker" and temp_publication.pubyear = 2015
+[2018-10-11 21:04:39] 6 rows retrieved starting from 1 in 64 ms (execution: 23 ms, fetching: 41 ms)
+sql> WITH temp_publication AS(
+     SELECT P.*, A.authorname
+     FROM (pub_author AS PA
+     INNER JOIN publication AS P ON PA.pubid = P.pubid)
+     INNER JOIN author AS A ON PA.aid = A.aid
+     )
+     
+     SELECT *
+     FROM temp_publication
+     WHERE temp_publication.authorname = "Rolf Hennicker" and temp_publication.pubyear = 2015
+[2018-10-11 21:04:39] 6 rows retrieved starting from 1 in 88 ms (execution: 27 ms, fetching: 61 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT *
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     WHERE author.authorname = "Chun Tang"
+[2018-10-11 21:04:39] 1 row retrieved starting from 1 in 104 ms (execution: 17 ms, fetching: 87 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT *
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     WHERE author.authorname = "Chun Tang"
+[2018-10-11 21:04:39] 1 row retrieved starting from 1 in 104 ms (execution: 58 ms, fetching: 46 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT *
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     WHERE author.authorname = "Chun Tang"
+[2018-10-11 21:04:39] 1 row retrieved starting from 1 in 47 ms (execution: 17 ms, fetching: 30 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT author.authorname
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     GROUP BY author.authorname
+     HAVING count(*) > 1
+[2018-10-11 21:04:40] 20 rows retrieved starting from 1 in 45 ms (execution: 32 ms, fetching: 13 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT author.authorname
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     GROUP BY author.authorname
+     HAVING count(*) > 1
+[2018-10-11 21:04:40] 20 rows retrieved starting from 1 in 61 ms (execution: 46 ms, fetching: 15 ms)
+sql> WITH temp_conference AS(
+     SELECT *
+     FROM publication
+     WHERE pubkey LIKE ("conf/kdd/%") and pubyear = 2003
+     )
+     
+     SELECT author.authorname
+     FROM (temp_conference JOIN pub_author ON temp_conference.pubid = pub_author.pubid)
+     JOIN author ON pub_author.aid = author.aid
+     GROUP BY author.authorname
+     HAVING count(*) > 1
+[2018-10-11 21:04:40] 20 rows retrieved starting from 1 in 118 ms (execution: 103 ms, fetching: 15 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 9
+     ),
+     
+      temp_sigmod AS (
+      SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/sigmod/%")
+      GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+      HAVING COUNT(*) > 9
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname IN
+     (SELECT authorname
+     FROM temp_sigmod)
+[2018-10-11 21:04:40] 61 rows retrieved starting from 1 in 159 ms (execution: 132 ms, fetching: 27 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 9
+     ),
+     
+      temp_sigmod AS (
+      SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/sigmod/%")
+      GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+      HAVING COUNT(*) > 9
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname IN
+     (SELECT authorname
+     FROM temp_sigmod)
+[2018-10-11 21:04:40] 61 rows retrieved starting from 1 in 139 ms (execution: 115 ms, fetching: 24 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 9
+     ),
+     
+      temp_sigmod AS (
+      SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/sigmod/%")
+      GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+      HAVING COUNT(*) > 9
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname IN
+     (SELECT authorname
+     FROM temp_sigmod)
+[2018-10-11 21:04:41] 61 rows retrieved starting from 1 in 139 ms (execution: 115 ms, fetching: 24 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 14
+     ),
+     
+      temp_kdd AS (
+      SELECT DISTINCT temp_pub_author.aid, temp_pub_author.authorname
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/kdd/%")
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname NOT IN (
+     SELECT authorname
+     FROM temp_kdd)
+[2018-10-11 21:04:41] 14 rows retrieved starting from 1 in 172 ms (execution: 148 ms, fetching: 24 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 14
+     ),
+     
+      temp_kdd AS (
+      SELECT DISTINCT temp_pub_author.aid, temp_pub_author.authorname
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/kdd/%")
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname NOT IN (
+     SELECT authorname
+     FROM temp_kdd)
+[2018-10-11 21:04:41] 14 rows retrieved starting from 1 in 153 ms (execution: 128 ms, fetching: 25 ms)
+sql> WITH temp_pub_author AS (
+     SELECT pub_author.aid, pub_author.pubid, author.authorname
+     FROM pub_author JOIN author ON pub_author.aid = author.aid
+     ),
+     
+     temp_pvldb AS (
+     SELECT temp_pub_author.aid, temp_pub_author.authorname, count(*)
+     FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+     WHERE pubkey LIKE ("conf/vldb/%")
+     GROUP BY temp_pub_author.aid, temp_pub_author.authorname
+     HAVING COUNT(*) > 14
+     ),
+     
+      temp_kdd AS (
+      SELECT DISTINCT temp_pub_author.aid, temp_pub_author.authorname
+      FROM publication JOIN temp_pub_author ON publication.pubid = temp_pub_author.pubid
+      WHERE pubkey LIKE ("conf/kdd/%")
+     )
+     
+     SELECT *
+     FROM temp_pvldb
+     WHERE temp_pvldb.authorname NOT IN (
+     SELECT authorname
+     FROM temp_kdd)
+[2018-10-11 21:04:41] 14 rows retrieved starting from 1 in 161 ms (execution: 140 ms, fetching: 21 ms)
+sql> WITH year_temp AS(
+      SELECT DISTINCT P.pubyear, FLOOR((P.pubyear-1970)/10) AS decade_no
+      FROM pub AS P
+      WHERE P.pubyear >= 1970
+      ORDER BY P.pubyear ASC
+     ),
+     
+     pcount AS(
+      SELECT P.pubyear, count(P.pubid) AS psum
+      FROM pub AS P
+      WHERE P.pubkey LIKE ("conf/%") and P.pubyear >= 1970
+      GROUP BY P.pubyear
+     )
+     
+     SELECT (decade_no * 10 + 1970) AS start, (decade_no * 10 + 1980) AS end, SUM(pcount.psum) AS total
+     FROM pcount JOIN year_temp ON pcount.pubyear = year_temp.pubyear
+     GROUP BY decade_no
+     ORDER BY decade_no ASC
+[2018-10-11 21:04:49] 5 rows retrieved starting from 1 in 7 s 701 ms (execution: 7 s 682 ms, fetching: 19 ms)
+sql> WITH year_temp AS(
+      SELECT DISTINCT P.pubyear, FLOOR((P.pubyear-1970)/10) AS decade_no
+      FROM pub AS P
+      WHERE P.pubyear >= 1970
+      ORDER BY P.pubyear ASC
+     ),
+     
+     pcount AS(
+      SELECT P.pubyear, count(P.pubid) AS psum
+      FROM pub AS P
+      WHERE P.pubkey LIKE ("conf/%") and P.pubyear >= 1970
+      GROUP BY P.pubyear
+     )
+     
+     SELECT (decade_no * 10 + 1970) AS start, (decade_no * 10 + 1980) AS end, SUM(pcount.psum) AS total
+     FROM pcount JOIN year_temp ON pcount.pubyear = year_temp.pubyear
+     GROUP BY decade_no
+     ORDER BY decade_no ASC
+[2018-10-11 21:04:57] 5 rows retrieved starting from 1 in 7 s 659 ms (execution: 7 s 649 ms, fetching: 10 ms)
+sql> WITH year_temp AS(
+      SELECT DISTINCT P.pubyear, FLOOR((P.pubyear-1970)/10) AS decade_no
+      FROM pub AS P
+      WHERE P.pubyear >= 1970
+      ORDER BY P.pubyear ASC
+     ),
+     
+     pcount AS(
+      SELECT P.pubyear, count(P.pubid) AS psum
+      FROM pub AS P
+      WHERE P.pubkey LIKE ("conf/%") and P.pubyear >= 1970
+      GROUP BY P.pubyear
+     )
+     
+     SELECT (decade_no * 10 + 1970) AS start, (decade_no * 10 + 1980) AS end, SUM(pcount.psum) AS total
+     FROM pcount JOIN year_temp ON pcount.pubyear = year_temp.pubyear
+     GROUP BY decade_no
+     ORDER BY decade_no ASC
+[2018-10-11 21:05:04] 5 rows retrieved starting from 1 in 7 s 587 ms (execution: 7 s 577 ms, fetching: 10 ms)
+sql> WITH pub_title_contain_data AS (
+     SELECT pubid, title
+     FROM publication
+     WHERE title LIKE "%DATA%"
+     ),
+     
+     pubid_author_count as (
+     SELECT P1.pubid, COUNT(*) AS num_coauthor
+     FROM pub_title_contain_data AS P1
+      INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     GROUP BY P1.pubid
+     ),
+     
+     aid_coauthor_count AS (
+     SELECT P2.aid, P1.num_coauthor
+     FROM pubid_author_count AS P1 INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     ),
+     
+     most_coauthor AS (
+      SELECT aid, SUM(num_coauthor - 1 ) AS total_coauthor
+      FROM aid_coauthor_count
+      GROUP BY aid
+      ORDER BY total_coauthor DESC
+      LIMIT 1
+     )
+     
+     SELECT A2.authorname, A1.total_coauthor
+     FROM most_coauthor AS A1 INNER JOIN author AS A2 ON A1.aid = A2.aid
+[2018-10-11 21:05:11] 1 row retrieved starting from 1 in 6 s 760 ms (execution: 6 s 749 ms, fetching: 11 ms)
+sql> WITH pub_title_contain_data AS (
+     SELECT pubid, title
+     FROM publication
+     WHERE title LIKE "%DATA%"
+     ),
+     
+     pubid_author_count as (
+     SELECT P1.pubid, COUNT(*) AS num_coauthor
+     FROM pub_title_contain_data AS P1
+      INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     GROUP BY P1.pubid
+     ),
+     
+     aid_coauthor_count AS (
+     SELECT P2.aid, P1.num_coauthor
+     FROM pubid_author_count AS P1 INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     ),
+     
+     most_coauthor AS (
+      SELECT aid, SUM(num_coauthor - 1 ) AS total_coauthor
+      FROM aid_coauthor_count
+      GROUP BY aid
+      ORDER BY total_coauthor DESC
+      LIMIT 1
+     )
+     
+     SELECT A2.authorname, A1.total_coauthor
+     FROM most_coauthor AS A1 INNER JOIN author AS A2 ON A1.aid = A2.aid
+[2018-10-11 21:05:18] 1 row retrieved starting from 1 in 6 s 920 ms (execution: 6 s 910 ms, fetching: 10 ms)
+sql> WITH pub_title_contain_data AS (
+     SELECT pubid, title
+     FROM publication
+     WHERE title LIKE "%DATA%"
+     ),
+     
+     pubid_author_count as (
+     SELECT P1.pubid, COUNT(*) AS num_coauthor
+     FROM pub_title_contain_data AS P1
+      INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     GROUP BY P1.pubid
+     ),
+     
+     aid_coauthor_count AS (
+     SELECT P2.aid, P1.num_coauthor
+     FROM pubid_author_count AS P1 INNER JOIN pub_author AS P2
+     ON P1.pubid = P2.pubid
+     ),
+     
+     most_coauthor AS (
+      SELECT aid, SUM(num_coauthor - 1 ) AS total_coauthor
+      FROM aid_coauthor_count
+      GROUP BY aid
+      ORDER BY total_coauthor DESC
+      LIMIT 1
+     )
+     
+     SELECT A2.authorname, A1.total_coauthor
+     FROM most_coauthor AS A1 INNER JOIN author AS A2 ON A1.aid = A2.aid
+[2018-10-11 21:05:25] 1 row retrieved starting from 1 in 6 s 811 ms (execution: 6 s 801 ms, fetching: 10 ms)
+sql> WITH conf_DATA AS (
+     SELECT P.pubid
+     FROM proceedings AS I
+     LEFT JOIN publication AS P ON I.pubid = P.pubid
+     WHERE P.title LIKE "%DATA%" and P.pubyear > 2013
+     ),
+     
+     inproceedings_in_conf AS (
+     SELECT I.pubid AS pubid
+     FROM conf_DATA AS C
+     INNER JOIN inproceedings AS I ON C.pubid = I.crossref_pubid
+     ),
+     
+     aid_count AS (
+     SELECT P.aid, COUNT(*) AS count
+     FROM inproceedings_in_conf AS I
+     INNER JOIN pub_author AS P ON I.pubid = P.pubid
+     GROUP BY P.aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 10
+     )
+     
+     SELECT A2.authorname, A1.count
+     FROM aid_count AS A1 JOIN author AS A2 on A1.aid = A2.aid
+[2018-10-11 21:05:26] 10 rows retrieved starting from 1 in 749 ms (execution: 729 ms, fetching: 20 ms)
+sql> WITH conf_DATA AS (
+     SELECT P.pubid
+     FROM proceedings AS I
+     LEFT JOIN publication AS P ON I.pubid = P.pubid
+     WHERE P.title LIKE "%DATA%" and P.pubyear > 2013
+     ),
+     
+     inproceedings_in_conf AS (
+     SELECT I.pubid AS pubid
+     FROM conf_DATA AS C
+     INNER JOIN inproceedings AS I ON C.pubid = I.crossref_pubid
+     ),
+     
+     aid_count AS (
+     SELECT P.aid, COUNT(*) AS count
+     FROM inproceedings_in_conf AS I
+     INNER JOIN pub_author AS P ON I.pubid = P.pubid
+     GROUP BY P.aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 10
+     )
+     
+     SELECT A2.authorname, A1.count
+     FROM aid_count AS A1 JOIN author AS A2 on A1.aid = A2.aid
+[2018-10-11 21:05:27] 10 rows retrieved starting from 1 in 547 ms (execution: 524 ms, fetching: 23 ms)
+sql> WITH conf_DATA AS (
+     SELECT P.pubid
+     FROM proceedings AS I
+     LEFT JOIN publication AS P ON I.pubid = P.pubid
+     WHERE P.title LIKE "%DATA%" and P.pubyear > 2013
+     ),
+     
+     inproceedings_in_conf AS (
+     SELECT I.pubid AS pubid
+     FROM conf_DATA AS C
+     INNER JOIN inproceedings AS I ON C.pubid = I.crossref_pubid
+     ),
+     
+     aid_count AS (
+     SELECT P.aid, COUNT(*) AS count
+     FROM inproceedings_in_conf AS I
+     INNER JOIN pub_author AS P ON I.pubid = P.pubid
+     GROUP BY P.aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 10
+     )
+     
+     SELECT A2.authorname, A1.count
+     FROM aid_count AS A1 JOIN author AS A2 on A1.aid = A2.aid
+[2018-10-11 21:05:27] 10 rows retrieved starting from 1 in 604 ms (execution: 583 ms, fetching: 21 ms)
+sql> WITH count_greater_than_100 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_june AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%june%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_100 AS C1
+     INNER JOIN conf_in_june AS C2 ON C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:05:28] 60 rows retrieved starting from 1 in 767 ms (execution: 748 ms, fetching: 19 ms)
+sql> WITH count_greater_than_100 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_june AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%june%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_100 AS C1
+     INNER JOIN conf_in_june AS C2 ON C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:05:29] 60 rows retrieved starting from 1 in 728 ms (execution: 709 ms, fetching: 19 ms)
+sql> WITH count_greater_than_100 AS (
+      SELECT crossref_pubid AS pubid, COUNT(*) AS count
+      FROM inproceedings
+      GROUP BY crossref_pubid
+      HAVING COUNT(*) > 200
+     ),
+     
+     conf_in_june AS (
+      SELECT pubid, pubkey, title
+      FROM publication
+      WHERE title LIKE "%june%" and pubtype_id = 2
+     ),
+     
+     required_conf_dup AS (
+     SELECT C1.pubid
+     FROM count_greater_than_100 AS C1
+     INNER JOIN conf_in_june AS C2 ON C1.pubid = C2.pubid
+     )
+     
+     SELECT DISTINCT P.conf
+     FROM proceedings AS P INNER JOIN required_conf_dup AS R ON P.pubid = R.pubid
+[2018-10-11 21:05:30] 60 rows retrieved starting from 1 in 740 ms (execution: 721 ms, fetching: 19 ms)
+sql> WITH pub_last_30_years AS (
+     SELECT *
+     FROM publication
+     WHERE pubyear BETWEEN 1988 AND 2018
+     ),
+     
+     author_fname_H AS (
+     SELECT *
+     FROM author
+     WHERE SUBSTRING_INDEX(author.authorname , ' ', -1) LIKE 'H%'
+     ),
+     
+     author_H_pub AS (
+     SELECT A.authorname, P.pubid
+     FROM author_fname_H AS A JOIN pub_author AS P ON A.aid = P.aid
+     ),
+     
+     author_H_pub_30 AS (
+     SELECT DISTINCT A.authorname, P.pubyear
+     FROM author_H_pub AS A
+     INNER JOIN pub_last_30_years AS P ON A.pubid = P.pubid
+     )
+     
+     SELECT A.authorname
+     FROM author_H_pub_30 AS A
+     GROUP BY A.authorname
+     HAVING COUNT(*) >30
+[2018-10-11 21:07:19] 32 rows retrieved starting from 1 in 1 m 48 s 924 ms (execution: 1 m 48 s 917 ms, fetching: 7 ms)
+sql> WITH pub_last_30_years AS (
+     SELECT *
+     FROM publication
+     WHERE pubyear BETWEEN 1988 AND 2018
+     ),
+     
+     author_fname_H AS (
+     SELECT *
+     FROM author
+     WHERE SUBSTRING_INDEX(author.authorname , ' ', -1) LIKE 'H%'
+     ),
+     
+     author_H_pub AS (
+     SELECT A.authorname, P.pubid
+     FROM author_fname_H AS A JOIN pub_author AS P ON A.aid = P.aid
+     ),
+     
+     author_H_pub_30 AS (
+     SELECT DISTINCT A.authorname, P.pubyear
+     FROM author_H_pub AS A
+     INNER JOIN pub_last_30_years AS P ON A.pubid = P.pubid
+     )
+     
+     SELECT A.authorname
+     FROM author_H_pub_30 AS A
+     GROUP BY A.authorname
+     HAVING COUNT(*) >30
+[2018-10-11 21:09:22] 32 rows retrieved starting from 1 in 2 m 3 s 386 ms (execution: 2 m 3 s 378 ms, fetching: 8 ms)
+sql> WITH pub_last_30_years AS (
+     SELECT *
+     FROM publication
+     WHERE pubyear BETWEEN 1988 AND 2018
+     ),
+     
+     author_fname_H AS (
+     SELECT *
+     FROM author
+     WHERE SUBSTRING_INDEX(author.authorname , ' ', -1) LIKE 'H%'
+     ),
+     
+     author_H_pub AS (
+     SELECT A.authorname, P.pubid
+     FROM author_fname_H AS A JOIN pub_author AS P ON A.aid = P.aid
+     ),
+     
+     author_H_pub_30 AS (
+     SELECT DISTINCT A.authorname, P.pubyear
+     FROM author_H_pub AS A
+     INNER JOIN pub_last_30_years AS P ON A.pubid = P.pubid
+     )
+     
+     SELECT A.authorname
+     FROM author_H_pub_30 AS A
+     GROUP BY A.authorname
+     HAVING COUNT(*) >30
+[2018-10-11 21:11:34] 32 rows retrieved starting from 1 in 2 m 11 s 843 ms (execution: 2 m 11 s 836 ms, fetching: 7 ms)
+sql> WITH earliest_pub as (
+     SELECT author.aid AS aid, author.authorname AS authorname
+     FROM publication, pub_author, author
+     WHERE publication.pubyear = (
+     SELECT MIN(pubyear)
+     FROM publication)
+          AND publication.pubid = pub_author.pubid
+     AND pub_author.aid = author.aid
+     )
+     
+     SELECT authorname, COUNT(*) AS cnt
+     FROM earliest_pub as t1, pub_author
+     WHERE t1.aid = pub_author.aid
+     GROUP BY t1.aid,authorname
+[2018-10-11 21:11:35] 8 rows retrieved starting from 1 in 62 ms (execution: 18 ms, fetching: 44 ms)
+sql> WITH earliest_pub as (
+     SELECT author.aid AS aid, author.authorname AS authorname
+     FROM publication, pub_author, author
+     WHERE publication.pubyear = (
+     SELECT MIN(pubyear)
+     FROM publication)
+          AND publication.pubid = pub_author.pubid
+     AND pub_author.aid = author.aid
+     )
+     
+     SELECT authorname, COUNT(*) AS cnt
+     FROM earliest_pub as t1, pub_author
+     WHERE t1.aid = pub_author.aid
+     GROUP BY t1.aid,authorname
+[2018-10-11 21:11:35] 8 rows retrieved starting from 1 in 109 ms (execution: 25 ms, fetching: 84 ms)
+sql> WITH earliest_pub as (
+     SELECT author.aid AS aid, author.authorname AS authorname
+     FROM publication, pub_author, author
+     WHERE publication.pubyear = (
+     SELECT MIN(pubyear)
+     FROM publication)
+          AND publication.pubid = pub_author.pubid
+     AND pub_author.aid = author.aid
+     )
+     
+     SELECT authorname, COUNT(*) AS cnt
+     FROM earliest_pub as t1, pub_author
+     WHERE t1.aid = pub_author.aid
+     GROUP BY t1.aid,authorname
+[2018-10-11 21:11:35] 8 rows retrieved starting from 1 in 95 ms (execution: 20 ms, fetching: 75 ms)
+sql> WITH author_top3 AS (
+     SELECT aid, COUNT(*) AS cnt
+     FROM pub_author
+     GROUP BY aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 3
+     )
+     
+     SELECT A.authorname, author_top3.cnt
+     FROM author_top3 INNER JOIN author AS A ON author_top3.aid = A.aid
+[2018-10-11 21:11:38] 3 rows retrieved starting from 1 in 3 s 431 ms (execution: 3 s 417 ms, fetching: 14 ms)
+sql> WITH author_top3 AS (
+     SELECT aid, COUNT(*) AS cnt
+     FROM pub_author
+     GROUP BY aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 3
+     )
+     
+     SELECT A.authorname, author_top3.cnt
+     FROM author_top3 INNER JOIN author AS A ON author_top3.aid = A.aid
+[2018-10-11 21:11:42] 3 rows retrieved starting from 1 in 3 s 451 ms (execution: 3 s 439 ms, fetching: 12 ms)
+sql> WITH author_top3 AS (
+     SELECT aid, COUNT(*) AS cnt
+     FROM pub_author
+     GROUP BY aid
+     ORDER BY COUNT(*) DESC
+     LIMIT 3
+     )
+     
+     SELECT A.authorname, author_top3.cnt
+     FROM author_top3 INNER JOIN author AS A ON author_top3.aid = A.aid
+[2018-10-11 21:11:45] 3 rows retrieved starting from 1 in 3 s 424 ms (execution: 3 s 407 ms, fetching: 17 ms)
