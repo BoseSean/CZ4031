@@ -10,3 +10,9 @@ Create the Publication Schema in SQL We will refer to this schema as PubSchema i
 following sections.
 
 Queries and Optimizing Queries
+
+## Members
+
+- @NekoYIQI
+- @Celiasqqq
+- @GanyuShi
